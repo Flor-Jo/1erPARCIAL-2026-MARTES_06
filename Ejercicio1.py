@@ -16,33 +16,48 @@ class Pokemon:
     def __str__(self):
         return f"Nombre: {self.nombre}, Tipo: {self.tipo}, Nivel: {self.nivel} "
     
+class PokemonNode:
+    def __init__(self, pokemon: Pokemon):
+        self.pokemon = pokemon
+        self.siguiente = None
+
+
 class Entrenador:
     def __init__(self, nombre: str):
         self.nombre = nombre
-        self.equipo = []
+        self.cabeza = None
+        self.cantidad = 0
 
     def agregar_pokemon(self, pokemon: Pokemon) :
-        if len(self.equipo) < 6:
-            self.equipo.aappend(pokemon)
-            print(f"{pokemon.nombre} fue agregado al equipo de {self.nombre}. ")
-            else:
-                print(f"El equipo ya esta completo (maximo 6 Pokemon). No se pudo agregar a {pokemon.nombre}")
+        if self.cantidad >= 6:
+            print("No se pueden tener más Pokemon en el equipo. ")
+            return
+        nuevo_nodo = PokemonNode (pokemon)
+
+        if self.cabeza is None:
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            while actual.siguiente is not None:
+                actual = actual.siguiente
+                actual.siguiente = nuevo_nodo
+
+        self.cantidad += 1
     
     def mostrar_equipo(self):
-        if len(self.equipo) == 0:
-            print(f"{self.nombre} no tiene ningun Pokemon en su equipo todavia")
-        else: 
-            print(f"---Equipode {self.nombre} ---")   
-            for poke in self.equipo:
-                print(poke)
+        actual = self.cabeza
+        while actual is not None:
+            print(str(actual.pokemon))
+            actual = actual.siguiente
 
-    def nivel_promedio(self): 
-        if len(self.equipo) == 0:
+    def nivel_promedio(self):
+        if self.cantidad == 0:
             return 0
 
         suma_niveles = 0
-        for poke in self.equipo:
-            suma_niveles += poke.nivel
-
-
-        return suma_niveles / len(self.equipo)
+        actual = self.cabeza
+        while actual is not None:
+            suma_niveles += actual.pokemon.nivel
+            actual = actual.siguiente
+    
+    return suma_niveles / self.cantidad
